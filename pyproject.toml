@@ -1,0 +1,12 @@
+[project]
+name = "mlfs"
+version = "0.1.0"
+description = "Machine Learning From Scratch using NumPy"
+authors = [{ name = "Charly21r" }]
+dependencies = [
+    "numpy",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
