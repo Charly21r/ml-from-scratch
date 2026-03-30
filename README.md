@@ -1,20 +1,36 @@
 # Machine Learning From Scratch
 
-A clean, well-tested implementation of core machine learning algorithms in pure Python + NumPy
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
 
-## 🧠 Goals
-This project focuses on:
-- Deep understanding of ML algorithms
-- Writing production-quality Python
-- Reproducing scikit-learn behavior
+A clean, well-tested, production-quality implementation of core machine learning algorithms in pure Python and NumPy. Educational and performant.
+
+## 🎯 Goals
+- **Deep Understanding**: Clean implementations showing how algorithms work internally
+- **Quality**: Professional code standards matching scikit-learn
+- **Educational Value**: Well-documented, tested implementations for learning
+
+## ✨ Features
+
+- **DecisionTreeClassifier**: CART algorithm with Gini/Entropy criteria, pruning, feature importances
+- **KNNClassifier**: Flexible k-NN with multiple distance metrics
+- **Comprehensive Testing**: Rigorous test suite with pytest and coverage
+
 
 ## 📦 Installation
+
+### From Source
+
 ```bash
-python -m pip install -e .
-python -m pip install -r requirements.txt
+git clone https://github.com/yourusername/ml-from-scratch.git
+cd ml-from-scratch
+python -m venv venv
+source venv/bin/activate
+pip install -e ".[dev]"
 ```
 
-## Usage
+## 🚀 Quick Start
+
 ```python
 import numpy as np
 from mlfs import DecisionTreeClassifier, KNNClassifier
@@ -33,21 +49,28 @@ knn = KNNClassifier(k=3).fit(X, y)
 print(knn.predict(np.array([[0.1], [1.9]])))
 ```
 
-## 🧪 Running tests
+## 🧪 Testing
+
 ```bash
-pytest -q
+pytest --cov=mlfs --cov-report=html
 ```
 
 ## 📊 Benchmarks
+
 ```bash
 python benchmarks/knn_vs_sklearn.py
 python benchmarks/tree_vs_sklearn.py
 ```
 
-## 📝 Future Work
-- `DecisionTreeRegressor`
-- `RandomForest`
-- missing value support / robust feature engineering
+## 📚 Documentation
+
+- [API Standards](API_STANDARDS.md) - Design patterns
+
+
+## 📄 License
+
+BSD 3-Clause License - see [LICENSE](LICENSE) for details.
 
 ---
-⭐ If you find this useful, feel free to star the repo!
+
+⭐ If you find this useful, please star the repo!
