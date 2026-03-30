@@ -1,7 +1,9 @@
 import numpy as np
 import pytest
-from mlfs.neighbors import KNNClassifier
 from sklearn.neighbors import KNeighborsClassifier
+
+from mlfs.neighbors import KNNClassifier
+
 
 # --------------------------
 # Fixtures
@@ -11,6 +13,7 @@ def simple_dataset():
     X = np.array([[0], [1], [2]])
     y = np.array([0, 1, 1])
     return X, y
+
 
 @pytest.fixture
 def random_dataset():
@@ -28,6 +31,7 @@ def test_knn_fit_predict_simple(simple_dataset):
     model = KNNClassifier(k=1).fit(X, y)
     preds = model.predict(np.array([[1.1]]))
     assert preds[0] == 1
+
 
 def test_knn_score_matches_predictions(simple_dataset):
     X, y = simple_dataset
@@ -50,13 +54,15 @@ def test_knn_distance_metrics(metric, random_dataset):
 # Edge cases / validation
 # --------------------------
 def test_knn_invalid_k():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="k must be positive"):
         KNNClassifier(k=0)
+
 
 def test_knn_k_greater_than_samples(simple_dataset):
     X, y = simple_dataset
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="is greater than n_samples"):
         KNNClassifier(k=10).fit(X, y)
+
 
 def test_knn_predict_before_fit(simple_dataset):
     X, _ = simple_dataset
@@ -64,11 +70,12 @@ def test_knn_predict_before_fit(simple_dataset):
     with pytest.raises(RuntimeError):
         model.predict(X)
 
+
 def test_knn_invalid_input_shape():
     X = np.array([1, 2, 3])
     y = np.array([0, 1, 1])
     model = KNNClassifier(k=1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="X must be a 2D array, got shape"):
         model.fit(X, y)
 
 
@@ -85,7 +92,7 @@ def test_knn_matches_sklearn(metric, random_dataset):
     elif metric == "manhattan":
         sk = KNeighborsClassifier(n_neighbors=k, metric="manhattan").fit(X, y)
     else:  # cosine
-        # sklearn doesn’t support cosine directly; use metric='cosine'
+        # sklearn doesn't support cosine directly; use metric='cosine'
         sk = KNeighborsClassifier(n_neighbors=k, metric="cosine").fit(X, y)
 
     agreement = np.mean(model.predict(X) == sk.predict(X))

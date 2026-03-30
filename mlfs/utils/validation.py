@@ -1,7 +1,5 @@
 """Input validation utilities following scikit-learn patterns."""
 
-from typing import Optional, Tuple
-
 import numpy as np
 from numpy.typing import NDArray
 
@@ -12,7 +10,7 @@ def check_array(
     X: NDArray,
     ensure_2d: bool = True,
     allow_nd: bool = False,
-    dtype: Optional[type] = None,
+    dtype: type | None = None,
     ensure_min_samples: int = 1,
     ensure_min_features: int = 1,
 ) -> NDArray:
@@ -46,27 +44,19 @@ def check_array(
     X = np.asarray(X)
 
     if not allow_nd and X.ndim != 2 and ensure_2d:
-        raise ValueError(
-            f"X must be a 2D array, got shape {X.shape} with {X.ndim} dimensions"
-        )
+        raise ValueError(f"X must be a 2D array, got shape {X.shape} with {X.ndim} dimensions")
 
     if X.shape[0] < ensure_min_samples:
-        raise ValueError(
-            f"X must have at least {ensure_min_samples} samples, got {X.shape[0]}"
-        )
+        raise ValueError(f"X must have at least {ensure_min_samples} samples, got {X.shape[0]}")
 
     if X.ndim >= 2 and X.shape[1] < ensure_min_features:
-        raise ValueError(
-            f"X must have at least {ensure_min_features} features, got {X.shape[1]}"
-        )
+        raise ValueError(f"X must have at least {ensure_min_features} features, got {X.shape[1]}")
 
     if dtype is not None and X.dtype != dtype:
         try:
             X = X.astype(dtype)
         except (ValueError, TypeError) as e:
-            raise ValueError(
-                f"Cannot convert X to dtype {dtype}: {e}"
-            ) from e
+            raise ValueError(f"Cannot convert X to dtype {dtype}: {e}") from e
 
     return X
 
@@ -76,10 +66,10 @@ def check_X_y(
     y: NDArray,
     ensure_2d: bool = True,
     allow_nd: bool = False,
-    dtype: Optional[type] = None,
+    dtype: type | None = None,
     ensure_min_samples: int = 1,
     ensure_min_features: int = 1,
-) -> Tuple[NDArray, NDArray]:
+) -> tuple[NDArray, NDArray]:
     """Validate X and y arrays.
 
     Ensures that X and y have compatible dimensions and returns
@@ -156,13 +146,11 @@ def check_is_fitted(
         If estimator is not fitted.
     """
     if not hasattr(estimator, "__dict__"):
-        raise TypeError(
-            f"estimator must be an object with __dict__, "
-            f"got {type(estimator)}"
-        )
+        raise TypeError(f"estimator must be an object with __dict__, " f"got {type(estimator)}")
 
     not_fitted_attrs = [
-        attr for attr in attributes
+        attr
+        for attr in attributes
         if not hasattr(estimator, attr) or getattr(estimator, attr) is None
     ]
 

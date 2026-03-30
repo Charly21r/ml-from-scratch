@@ -1,10 +1,9 @@
 """Base classes for all estimators in MLFS."""
 
-from abc import ABC, abstractmethod
 import inspect
-from typing import Any, Dict
+from abc import ABC, abstractmethod
+from typing import Any
 
-import numpy as np
 from numpy.typing import NDArray
 
 
@@ -57,8 +56,8 @@ class BaseEstimator(ABC):
         raise NotImplementedError(
             f"{self.__class__.__name__} does not implement a default score method."
         )
-    
-    def get_params(self, deep: bool = True) -> Dict[str, Any]:
+
+    def get_params(self, deep: bool = True) -> dict[str, Any]:
         """Get parameters for this estimator.
 
         Parameters
@@ -71,10 +70,10 @@ class BaseEstimator(ABC):
         params : dict
             Parameter names mapped to their values.
         """
-        signature = inspect.signature(self.__init__)
-        params: Dict[str, Any] = {}
-        
-        for name, param in signature.parameters.items():
+        signature = inspect.signature(type(self).__init__)
+        params: dict[str, Any] = {}
+
+        for name, _param in signature.parameters.items():
             if name == "self":
                 continue
 
@@ -117,9 +116,9 @@ class BaseEstimator(ABC):
         """
         if not params:
             return self
-        
+
         valid_params = self.get_params(deep=False)
-        
+
         for key, value in params.items():
             if key not in valid_params:
                 raise ValueError(
@@ -128,7 +127,7 @@ class BaseEstimator(ABC):
                     f"Valid parameters are: {sorted(valid_params.keys())}"
                 )
             setattr(self, key, value)
-        
+
         return self
 
     def __repr__(self) -> str:
@@ -143,11 +142,9 @@ class BaseEstimator(ABC):
         """
         class_name = self.__class__.__name__
         params = self.get_params(deep=False)
-        
+
         if not params:
             return f"{class_name}()"
-        
-        param_str = ", ".join(
-            f"{key}={value!r}" for key, value in params.items()
-        )
+
+        param_str = ", ".join(f"{key}={value!r}" for key, value in params.items())
         return f"{class_name}({param_str})"
