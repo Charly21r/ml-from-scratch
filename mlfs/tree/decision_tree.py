@@ -6,6 +6,9 @@ from typing import Optional
 
 import numpy as np
 
+from ..base.base_estimator import BaseEstimator
+from ..utils.validation import check_is_fitted, check_array, check_X_y
+
 
 @dataclass
 class Node:
@@ -28,7 +31,7 @@ class Node:
         return self.left is None and self.right is None
 
 
-class DecisionTreeClassifier:
+class DecisionTreeClassifier(BaseEstimator):
     """CART Decision Tree implementation from scratch."""
 
     def __init__(
@@ -57,15 +60,7 @@ class DecisionTreeClassifier:
         self.feature_importances_ = None
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "DecisionTreeClassifier":
-        X = np.asarray(X)
-        y = np.asarray(y)
-
-        if X.ndim != 2:
-            raise ValueError("X must be 2D")
-        if y.ndim != 1:
-            raise ValueError("y must be 1D")
-        if X.shape[0] != y.shape[0]:
-            raise ValueError("X and y have different number of rows")
+        X, y = check_X_y(X, y)
 
         self.classes_, y_enc = np.unique(y, return_inverse=True)
         self.n_classes_ = len(self.classes_)
@@ -88,12 +83,9 @@ class DecisionTreeClassifier:
         return self.classes_[y_pred_idx]
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
-        if self.tree is None:
-            raise RuntimeError("Model is not fitted")
+        check_is_fitted(self, ["tree", "classes_"])
 
-        X = np.asarray(X)
-        if X.ndim != 2:
-            raise ValueError("X must be 2D")
+        X = check_array(X)
 
         out = np.zeros((X.shape[0], self.n_classes_), dtype=float)
 
