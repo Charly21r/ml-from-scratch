@@ -1,12 +1,137 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "mlfs"
 version = "0.1.0"
 description = "Machine Learning From Scratch using NumPy"
-authors = [{ name = "Charly21r" }]
-dependencies = [
-    "numpy",
+readme = "README.md"
+license = {text = "BSD-3-Clause"}
+authors = [
+    {name = "Charly21r", email = "crrubio02@gmail.com"}
 ]
+maintainers = [
+    {name = "Charly21r", email = "crrubio02@gmail.com"}
+]
+keywords = [
+    "machine-learning",
+    "scikit-learn",
+    "decision-tree",
+    "knn",
+    "algorithms",
+    "educational",
+    "numpy"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Education",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.23.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "pydocstyle>=6.3",
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=1.2",
+    "sphinx-autodoc-typehints>=1.22",
+]
+benchmark = [
+    "scikit-learn>=1.7",
+]
+docs = [
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=1.2",
+    "sphinx-autodoc-typehints>=1.22",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/ml-from-scratch"
+Repository = "https://github.com/yourusername/ml-from-scratch.git"
+"Bug Tracker" = "https://github.com/yourusername/ml-from-scratch/issues"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "A", "C4", "ARG", "PT", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ARG001"]
+"__init__.py" = ["F401", "F403"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra -q"
+addopts = "-ra -q --strict-markers --cov=mlfs --cov-report=term-missing"
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["mlfs"]
+branch = true
+omit = ["*/tests/*", "*/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+    "@abstractproperty",
+]
+precision = 2
+skip_covered = false
