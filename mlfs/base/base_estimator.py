@@ -48,7 +48,7 @@ class BaseEstimator(ABC):
         """
         ...
 
-    def score(self, X: NDArray, y: NDArray) -> float:
+    def score(self, X: NDArray, y: NDArray | None = None) -> float:
         """Default score method.
 
         Should be implemented by subclasses or mixins.
