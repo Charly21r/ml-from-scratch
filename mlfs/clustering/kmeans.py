@@ -16,14 +16,15 @@ class KMeans(BaseEstimator):
         self,
         n_clusters: int = 8, 
         max_iter: int = 300, 
+        tol: float = 1e-4,
         random_state: int =42,
-        tol: float = 1e-4
     ):        
         if n_clusters <= 1:
             raise ValueError(f"k must be greater than 1, got {n_clusters}")
         
         self.n_clusters = n_clusters
         self.max_iter: int = max_iter
+        self.tol = tol
         self.random_state: int = random_state
         self.dist = Euclidean()
         self.centroids_ = None
@@ -41,6 +42,8 @@ class KMeans(BaseEstimator):
         centroids = X[indices].copy()
 
         for _ in range(self.max_iter):
+            old_centroids = centroids.copy()
+
             # Compute the distance
             H = self.dist(centroids, X) # The order of the arguments is important here
 
@@ -53,6 +56,11 @@ class KMeans(BaseEstimator):
                     centroids[i] = X[labels == i].mean(axis=0)
                 else:
                     centroids[i] = X[rng.integers(len(X))]  # empty cluster edge case
+
+            # Check for convergence
+            shift = np.linalg.norm(centroids - old_centroids)
+            if shift < self.tol:
+                break
         
         self.centroids_ = centroids
         self.labels_ = labels
