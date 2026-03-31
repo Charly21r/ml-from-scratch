@@ -49,7 +49,10 @@ class KMeans(BaseEstimator):
 
             # Update centroids
             for i in range(self.n_clusters):
-                centroids[i] = X[labels==i].mean(axis=0)
+                if np.any(labels == i):
+                    centroids[i] = X[labels == i].mean(axis=0)
+                else:
+                    centroids[i] = X[rng.integers(len(X))]  # empty cluster edge case
         
         self.centroids_ = centroids
         self.labels_ = labels
