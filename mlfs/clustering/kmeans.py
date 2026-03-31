@@ -14,14 +14,14 @@ class KMeans(BaseEstimator):
     """KMeans Algorithm"""
     def __init__(
         self,
-        n_clusters: int = 8, 
-        max_iter: int = 300, 
+        n_clusters: int = 8,
+        max_iter: int = 300,
         tol: float = 1e-4,
         random_state: int =42,
-    ):        
+    ):
         if n_clusters <= 1:
-            raise ValueError(f"k must be greater than 1, got {n_clusters}")
-        
+            raise ValueError(f"n_clusters must be greater than 1, got {n_clusters}")
+
         self.n_clusters = n_clusters
         self.max_iter: int = max_iter
         self.tol = tol
@@ -30,9 +30,14 @@ class KMeans(BaseEstimator):
         self.centroids_ = None
         self.labels_ = None
 
-    
+
     def fit(self, X: np.ndarray) -> KMeans:
         X = check_array(X)
+
+        if len(X) < self.n_clusters:
+            raise ValueError(
+                f"Number of samples ({len(X)}) must be >= n_clusters ({self.n_clusters})."
+            )
 
         # Create a random generator with a fixed seed
         rng = np.random.default_rng(seed=self.random_state)
@@ -61,7 +66,7 @@ class KMeans(BaseEstimator):
             shift = np.linalg.norm(centroids - old_centroids)
             if shift < self.tol:
                 break
-        
+
         self.centroids_ = centroids
         self.labels_ = labels
         return self
