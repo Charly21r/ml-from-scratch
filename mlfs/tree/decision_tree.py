@@ -7,6 +7,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from ..base.mixins import ClassifierMixin
 from ..base.base_estimator import BaseEstimator
 from ..utils.validation import check_array, check_is_fitted, check_X_y
 
@@ -32,7 +33,7 @@ class Node:
         return self.left is None and self.right is None
 
 
-class DecisionTreeClassifier(BaseEstimator):
+class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
     """CART Decision Tree implementation from scratch."""
 
     def __init__(
@@ -60,7 +61,10 @@ class DecisionTreeClassifier(BaseEstimator):
         self.tree: Node | None = None
         self.feature_importances_: NDArray[Any] | None = None
 
-    def fit(self, X: NDArray[Any], y: NDArray[Any]) -> DecisionTreeClassifier:
+    def fit(self, X: NDArray[Any], y: NDArray[Any] | None) -> DecisionTreeClassifier:
+        if y is None:
+            raise ValueError("y cannot be None for DecisionTreeClassifier")
+        
         X, y = check_X_y(X, y)
 
         self.classes_, y_enc = np.unique(y, return_inverse=True)
@@ -120,7 +124,10 @@ class DecisionTreeClassifier(BaseEstimator):
                 out[i] = np.zeros(self.n_classes_, dtype=float)
         return out
 
-    def score(self, X: NDArray[Any], y: NDArray[Any]) -> float:
+    def score(self, X: NDArray[Any], y: NDArray[Any] | None) -> float:
+        if y is None:
+            raise ValueError("y cannot be None for DecisionTreeClassifier")
+        
         y_pred = self.predict(X)
         return float(np.mean(y_pred == y))
 

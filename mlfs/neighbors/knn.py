@@ -5,6 +5,7 @@ import logging
 import numpy as np
 from numpy.typing import NDArray
 
+from ..base.mixins import ClassifierMixin
 from ..base.base_estimator import BaseEstimator
 from ..metrics import Cosine, DistanceMetric, Euclidean, Manhattan
 from ..utils.validation import check_array, check_is_fitted, check_X_y
@@ -12,7 +13,7 @@ from ..utils.validation import check_array, check_is_fitted, check_X_y
 logger = logging.getLogger(__name__)
 
 
-class KNNClassifier(BaseEstimator):
+class KNNClassifier(BaseEstimator, ClassifierMixin):
     """K-nearest neighbors classifier."""
 
     def __init__(self, k: int = 3, dist: str | type[DistanceMetric] = "euclidean"):
@@ -38,7 +39,10 @@ class KNNClassifier(BaseEstimator):
         self.y_train: np.ndarray | None = None
         self.classes_: np.ndarray | None = None
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> KNNClassifier:
+    def fit(self, X: np.ndarray, y: np.ndarray | None) -> KNNClassifier:
+        if y is None:
+            raise ValueError("y cannot be None for KNNClassifier")
+
         X, y = check_X_y(X, y)
 
         if self.k > X.shape[0]:
@@ -75,7 +79,9 @@ class KNNClassifier(BaseEstimator):
         classes_arr: NDArray[np.int64] = np.asarray(self.classes_, dtype=np.int64)
         return classes_arr[np.array(y_pred, dtype=np.int64)]
 
-    def score(self, X: NDArray, y: NDArray) -> float:
+    def score(self, X: NDArray, y: NDArray | None) -> float:
         """Return the mean accuracy on the given test data and labels."""
+        if y is None:
+            raise ValueError("y cannot be None for KNNClassifier")
         y_pred = self.predict(X)
         return float(np.mean(y_pred == y))
