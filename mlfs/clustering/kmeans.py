@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import logging
-
-import numpy as np
 from typing import cast
 
-from ..base.mixins import ClusterMixin
+import numpy as np
+
 from ..base.base_estimator import BaseEstimator
+from ..base.mixins import ClusterMixin
 from ..metrics import DistanceMetric, Euclidean
 from ..utils.validation import check_array, check_is_fitted
 
@@ -34,7 +34,7 @@ class KMeans(BaseEstimator, ClusterMixin):
         self.centroids_ = None
         self.labels_ = None
 
-    def fit(self, X: np.ndarray, y: np.ndarray | None = None) -> KMeans:
+    def fit(self, X: np.ndarray, y: np.ndarray | None = None) -> KMeans:  # noqa: ARG002
         X = check_array(X)
 
         if len(X) < self.n_clusters:
@@ -85,8 +85,8 @@ class KMeans(BaseEstimator, ClusterMixin):
 
         return np.array(labels)
 
-    def score(self, X: np.ndarray, y: np.ndarray | None = None) -> float:
-            """Return the negative inertia on the given test data."""
-            centroids = cast(np.ndarray, self.centroids_)
-            H = self.dist.compute(centroids, X)
-            return float(-np.sum(np.min(H, axis=1)))
+    def score(self, X: np.ndarray, y: np.ndarray | None = None) -> float:  # noqa: ARG002
+        """Return the negative inertia on the given test data."""
+        centroids = cast(np.ndarray, self.centroids_)
+        H = self.dist.compute(centroids, X)
+        return float(-np.sum(np.min(H, axis=1)))

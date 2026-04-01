@@ -1,9 +1,10 @@
+from typing import Protocol
+
 import numpy as np
 from numpy.typing import NDArray
 
-from typing import Protocol
-from ..metrics.distances import DistanceMetric
 from ..base.base_estimator import BaseEstimator
+from ..metrics.distances import DistanceMetric
 
 
 class _Predictor(Protocol):
@@ -28,7 +29,7 @@ class ClassifierMixin:
 
         y_pred = self.predict(X)
         return float(np.mean(y_pred == y))
-    
+
 
 class RegressorMixin:
     """Mixin for regression estimators."""
@@ -52,4 +53,3 @@ class ClusterMixin:
     def fit_predict(self: _ClusterProtocol, X: NDArray, y: NDArray | None = None) -> NDArray:
         """Fit the model and return cluster labels."""
         return self.fit(X, y).predict(X)
-    

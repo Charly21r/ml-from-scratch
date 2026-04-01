@@ -7,8 +7,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from ..base.mixins import ClassifierMixin
 from ..base.base_estimator import BaseEstimator
+from ..base.mixins import ClassifierMixin
 from ..utils.validation import check_array, check_is_fitted, check_X_y
 
 
@@ -64,7 +64,7 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
     def fit(self, X: NDArray[Any], y: NDArray[Any] | None) -> DecisionTreeClassifier:
         if y is None:
             raise ValueError("y cannot be None for DecisionTreeClassifier")
-        
+
         X, y = check_X_y(X, y)
 
         self.classes_, y_enc = np.unique(y, return_inverse=True)
@@ -127,7 +127,7 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
     def score(self, X: NDArray[Any], y: NDArray[Any] | None) -> float:
         if y is None:
             raise ValueError("y cannot be None for DecisionTreeClassifier")
-        
+
         y_pred = self.predict(X)
         return float(np.mean(y_pred == y))
 

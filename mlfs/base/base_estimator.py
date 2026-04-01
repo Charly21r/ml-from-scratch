@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from numpy.typing import NDArray
+from typing_extensions import Self
 
 
 class BaseEstimator(ABC):
@@ -15,7 +16,7 @@ class BaseEstimator(ABC):
     """
 
     @abstractmethod
-    def fit(self, X: NDArray, y: NDArray) -> "BaseEstimator":
+    def fit(self, X: NDArray, y: NDArray | None) -> Self:
         """Fit the estimator to training data.
 
         Parameters
@@ -48,7 +49,7 @@ class BaseEstimator(ABC):
         """
         ...
 
-    def score(self, X: NDArray, y: NDArray | None = None) -> float:
+    def score(self, X: NDArray, y: NDArray | None) -> float:
         """Default score method.
 
         Should be implemented by subclasses or mixins.
@@ -94,7 +95,7 @@ class BaseEstimator(ABC):
 
         return params
 
-    def set_params(self, **params: Any) -> "BaseEstimator":
+    def set_params(self, **params: Any) -> Self:
         """Set the parameters of this estimator.
 
         Method chaining is supported for convenience.

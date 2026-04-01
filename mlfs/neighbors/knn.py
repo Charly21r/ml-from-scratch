@@ -5,8 +5,8 @@ import logging
 import numpy as np
 from numpy.typing import NDArray
 
-from ..base.mixins import ClassifierMixin
 from ..base.base_estimator import BaseEstimator
+from ..base.mixins import ClassifierMixin
 from ..metrics import Cosine, DistanceMetric, Euclidean, Manhattan
 from ..utils.validation import check_array, check_is_fitted, check_X_y
 
