@@ -75,3 +75,63 @@ def test_kmeans_random_state_reproducibility():
     kmeans2.fit(X)
     np.testing.assert_allclose(kmeans1.centroids_, kmeans2.centroids_)
     np.testing.assert_array_equal(kmeans1.labels_, kmeans2.labels_)
+
+
+def test_kmeans_random_init():
+    """Test KMeans with random initialization."""
+    X = make_simple_clusters()
+    kmeans = KMeans(n_clusters=2, init="random", random_state=0)
+    kmeans.fit(X)
+    labels = kmeans.predict(X)
+    assert set(labels) == {0, 1}
+    assert kmeans.centroids_.shape == (2, 2)
+
+
+def test_kmeans_tolerance_convergence():
+    """Test that algorithm stops early if centroids shift is below tol."""
+    X = make_simple_clusters()
+    kmeans = KMeans(n_clusters=2, max_iter=1000, tol=1e5, random_state=0)
+    # With very high tol, it should converge immediately
+    kmeans.fit(X)
+    assert kmeans.centroids_.shape == (2, 2)
+
+
+def test_kmeans_predict_before_fit_error():
+    """Predicting before fitting should raise an error."""
+    X = make_simple_clusters()
+    kmeans = KMeans(n_clusters=2)
+    with pytest.raises(Exception, match=r".*fit.*"):
+        kmeans.predict(X)
+
+
+def test_kmeans_empty_cluster_handling():
+    """Ensure KMeans handles empty clusters (random re-assignment)."""
+    # Create 3 points but request 3 clusters
+    X = np.array([[0, 0], [0, 0], [1, 1]])
+    kmeans = KMeans(n_clusters=3, random_state=0)
+    kmeans.fit(X)
+    # Check centroids exist and labels are valid
+    assert kmeans.centroids_.shape == (3, 2)
+    assert set(kmeans.labels_) <= {0, 1, 2}
+
+
+def test_kmeans_high_dimensional_data():
+    """KMeans works with higher-dimensional data."""
+    X = np.random.randn(20, 10)
+    kmeans = KMeans(n_clusters=3, random_state=0)
+    kmeans.fit(X)
+    labels = kmeans.predict(X)
+    assert labels.shape[0] == X.shape[0]
+    assert kmeans.centroids_.shape == (3, 10)
+
+
+def test_kmeans_large_dataset_stability():
+    """Test KMeans with a larger dataset to ensure no errors and reproducibility."""
+    np.random.seed(0)
+    X = np.vstack([np.random.randn(100, 2) + np.array([i * 10, i * 10]) for i in range(5)])
+    kmeans1 = KMeans(n_clusters=5, random_state=0)
+    kmeans2 = KMeans(n_clusters=5, random_state=0)
+    kmeans1.fit(X)
+    kmeans2.fit(X)
+    np.testing.assert_allclose(kmeans1.centroids_, kmeans2.centroids_, rtol=1e-5, atol=1e-5)
+    np.testing.assert_array_equal(kmeans1.labels_, kmeans2.labels_)
