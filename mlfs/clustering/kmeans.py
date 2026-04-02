@@ -58,7 +58,10 @@ class KMeans(BaseEstimator, ClusterMixin):
             centroids[0] = X[idx]
 
             for i in range(1, self.n_clusters):
-                H = Euclidean().compute(np.array(centroids), X)
+                # Only used already assigned centroids
+                assigned = centroids[:i]
+
+                H = Euclidean().compute(np.array(assigned), X)
                 dists = H.min(axis=1)
                 probs = dists**2
                 total = probs.sum()
