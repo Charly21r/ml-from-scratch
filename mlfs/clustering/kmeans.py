@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import Literal, cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 from ..base.base_estimator import BaseEstimator
 from ..base.mixins import ClusterMixin
@@ -21,18 +22,23 @@ class KMeans(BaseEstimator, ClusterMixin):
         n_clusters: int = 8,
         max_iter: int = 300,
         tol: float = 1e-4,
+        init: Literal["kmeans++", "random"] = "kmeans++",
         random_state: int = 42,
     ):
         if n_clusters <= 1:
             raise ValueError(f"n_clusters must be greater than 1, got {n_clusters}")
-
         self.n_clusters = n_clusters
+
+        if init not in ["random", "kmeans++"]:
+            raise ValueError(f"Unsupported init type: {init}")
+        self.init = init
+
         self.max_iter: int = max_iter
-        self.tol = tol
+        self.tol: float = tol
         self.random_state: int = random_state
         self.dist: DistanceMetric = Euclidean()
-        self.centroids_ = None
-        self.labels_ = None
+        self.centroids_: NDArray[np.float64] | None = None
+        self.labels_: NDArray[np.float64] | None = None
 
     def fit(self, X: np.ndarray, y: np.ndarray | None = None) -> KMeans:  # noqa: ARG002
         X = check_array(X)
@@ -45,9 +51,30 @@ class KMeans(BaseEstimator, ClusterMixin):
         # Create a random generator with a fixed seed
         rng = np.random.default_rng(seed=self.random_state)
 
-        # Initialize centroids randomly
-        indices = rng.choice(len(X), size=self.n_clusters, replace=False)
-        centroids = X[indices].copy()
+        # Initialize centroids
+        if self.init == "kmeans++":
+            centroids = np.empty((self.n_clusters, X.shape[1]), dtype=float)
+            idx = rng.choice(len(X))
+            centroids[0] = X[idx]
+
+            for i in range(1, self.n_clusters):
+                H = Euclidean().compute(np.array(centroids), X)
+                dists = H.min(axis=1)
+                probs = dists**2
+                total = probs.sum()
+
+                if total == 0:
+                    # Edge case: all points identical
+                    idx = rng.choice(len(X))
+                else:
+                    probs /= total
+                    idx = rng.choice(len(X), p=probs)
+
+                centroids[i] = X[idx]
+
+        else:
+            indices = rng.choice(len(X), size=self.n_clusters, replace=False)
+            centroids = X[indices].copy()
 
         for _ in range(self.max_iter):
             old_centroids = centroids.copy()
