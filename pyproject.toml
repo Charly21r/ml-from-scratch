@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.9", "pybind11>=2.12"]
+build-backend = "scikit_build_core.build"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["forge*"]
+[tool.scikit-build]
+wheel.packages = ["forge"]
+build-dir = "build/{wheel_tag}"
 
 [project]
 name = "forge-ml"
