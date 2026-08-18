@@ -39,6 +39,13 @@ jobs:
       run: mypy forge/
       continue-on-error: true
     
+    - name: C++ tests
+      run: |
+        cmake -S . -B build/tests -DCMAKE_BUILD_TYPE=Debug \
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+        cmake --build build/tests
+        ctest --test-dir build/tests --output-on-failure
+
     - name: Test with pytest
       run: pytest --cov=forge --cov-report=xml --cov-report=term-missing
     
