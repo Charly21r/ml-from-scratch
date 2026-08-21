@@ -5,6 +5,9 @@ build-backend = "scikit_build_core.build"
 [tool.scikit-build]
 wheel.packages = ["forge"]
 build-dir = "build/{wheel_tag}"
+# Rebuild the extension automatically on import during editable installs,
+# so editing C++ only requires re-running the tests.
+editable.rebuild = true
 
 [project]
 name = "forge-ml"
